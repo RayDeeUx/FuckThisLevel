@@ -1,5 +1,5 @@
 {
-	"geode": "4.4.0",
+	"geode": "4.8.0",
 	"gd": {
 		"win": "2.2074",
 		"mac": "2.2074",
@@ -27,7 +27,7 @@
 		"fuckYouCounter": {
 			"name": "\"Fuck You\" Counter",
 			"type": "bool",
-			"default": false
+			"default": true
 		}
 	},
 	"dependencies": {
