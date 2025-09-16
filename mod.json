@@ -1,5 +1,5 @@
 {
-	"geode": "4.7.0",
+	"geode": "4.4.0",
 	"gd": {
 		"win": "2.2074",
 		"mac": "2.2074",
@@ -8,7 +8,7 @@
 	},
 	"id": "raydeeux_flingus.fuckthislevel",
 	"name": "FuckThisLevel",
-	"version": "v0.0.0-alpha.1",
+	"version": "v0.0.0-alpha.2",
 	"developers": ["RayDeeUx", "flingus"],
 	"description": "Hate levels twice as hard now! [citation needed]",
 	"repository": "https://github.com/RayDeeUx/FuckThisLevel",
@@ -24,6 +24,9 @@
 			"type": "bool",
 			"default": false
 		}
+	},
+	"dependencies": {
+		"geode.node-ids": ">=1.21.1"
 	},
 	"resources": {
 		"sprites": [

@@ -1,4 +1,4 @@
-# ModName
+# FuckThisLevel
 Now you can hate levels twice as harder than usual! [citation needed]
 
 Original implementation by flingus. Sprites by Alphalaneous.

@@ -1,6 +1,28 @@
+#include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/LikeItemLayer.hpp>
 
 using namespace geode::prelude;
+
+int nodeIDsMajorVersion = -1;
+int nodeIDsMinorVersion = -1;
+bool calledAlready = false;
+
+class $modify(MyMenuLayer, MenuLayer) {
+	bool init() {
+		if (!MenuLayer::init()) return false;
+
+		if (calledAlready) return true;
+		calledAlready = true;
+
+		auto nodeIDsVersion = Loader::get()->getLoadedMod("geode.node-ids")->getVersion();
+		nodeIDsMajorVersion = static_cast<int>(nodeIDsVersion.getMajor());
+		log::info("nodeIDsMajorVersion: {}", nodeIDsMajorVersion);
+		nodeIDsMinorVersion = static_cast<int>(nodeIDsVersion.getMinor());
+		log::info("nodeIDsMinorVersion: {}", nodeIDsMinorVersion);
+
+		return true;
+	}
+};
 
 class $modify(MyLikeItemLayer, LikeItemLayer) {
 	static void onModify(auto & self) {
@@ -11,9 +33,19 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		if (!Mod::get()->getSettingValue<bool>("enabled")) return true;
 		if (!m_buttonMenu) return true;
 
-		auto* likeButton = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(1);
-		auto* dislikeButton = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(2);
-		if (!likeButton || !dislikeButton) return true;
+		auto* likeButtonNode = m_mainLayer->querySelector("action-menu > like-button");
+		auto* dislikeButtonNode = m_mainLayer->querySelector("action-menu > dislike-button");
+		auto* likeDislikeParent = m_mainLayer->getChildByID("action-menu");
+		if (!likeButtonNode || !dislikeButtonNode) {
+			if (nodeIDsMinorVersion < 22 && nodeIDsMajorVersion < 2) {
+				likeButtonNode = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(1);
+				dislikeButtonNode = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(2);
+				likeDislikeParent = m_buttonMenu;
+			} else return true;
+		}
+
+		auto* likeButton = static_cast<CCMenuItemSpriteExtra*>(likeButtonNode);
+		auto* dislikeButton = static_cast<CCMenuItemSpriteExtra*>(dislikeButtonNode);
 
 		auto* fuckYouSprite = CCSprite::create("fuckYou.png"_spr);
 		auto* fuckYouCircle = CircleButtonSprite::create(fuckYouSprite);
@@ -22,11 +54,27 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 			fuckYouCircle, this, menu_selector(LikeItemLayer::onDislike)
 		);
 		fuckYouSprite->setScale(.85f);
+		middleFingerButton->setID("fuck-this-level-button"_spr);
+
+		if (nodeIDsMinorVersion > 21 && nodeIDsMajorVersion > 0) {
+			likeDislikeParent->addChild(middleFingerButton);
+			if (Mod::get()->getSettingValue<bool>("replaceDislike")) {
+				dislikeButton->setOpacity(0);
+				dislikeButton->setScale(0.f);
+				dislikeButton->setVisible(false);
+				dislikeButton->setEnabled(false);
+				dislikeButton->m_pListener = nullptr;
+				dislikeButton->m_pfnSelector = nullptr;
+			} else {
+				dislikeButton->setZOrder(likeButton->getZOrder() + 1);
+			}
+			likeDislikeParent->updateLayout();
+			return true;
+		}
 
 		m_buttonMenu->addChild(middleFingerButton);
 		middleFingerButton->setPosition(0.f, -15.f);
 
-		middleFingerButton->setID("fuck-this-level-button"_spr);
 
 		if (Mod::get()->getSettingValue<bool>("replaceDislike")) {
 			middleFingerButton->setPosition(dislikeButton->getPosition());
@@ -39,8 +87,8 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 			return true;
 		}
 
-		likeButton->setPositionX(likeButton->getPositionX() - 17.f);
-		dislikeButton->setPositionX(dislikeButton->getPositionX() + 17.f);
+		likeButtonNode->setPositionX(likeButtonNode->getPositionX() - 17.f);
+		dislikeButtonNode->setPositionX(dislikeButtonNode->getPositionX() + 17.f);
 		return true;
 	}
 };
