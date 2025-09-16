@@ -26,8 +26,9 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 	static void onModify(auto & self) {
 		(void) self.setHookPriority("LikeItemLayer::init", -3999);
 	}
-	bool init(LikeItemType p0, int p1, int p2) {
-		if (!LikeItemLayer::init(p0, p1, p2)) return false;
+	bool init(LikeItemType type, int p1, int p2) {
+		if (!LikeItemLayer::init(type, p1, p2)) return false;
+		if (type != LikeItemType::Level && type != LikeItemType::LevelList) return true;
 		if (!Mod::get()->getSettingValue<bool>("enabled")) return true;
 		if (!m_buttonMenu) return true;
 
@@ -53,13 +54,24 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		);
 		fuckYouSprite->setScale(.85f);
 		middleFingerButton->setID("fuck-this-level-button"_spr);
+		if (type == LikeItemType::LevelList) middleFingerButton->setUserObject("alphalaneous.tooltips/tooltip", CCString::create("Fuck This Level List"));
 
 		if (Mod::get()->getSettingValue<bool>("fuckYouCounter")) {
 			CCLabelBMFont* fuckYouCountLabel = CCLabelBMFont::create(fmt::format("\"Fuck You\" Count: {}", Mod::get()->getSavedValue<int64_t>("fuck-you-count", 0)).c_str(), "bigFont.fnt");
 			fuckYouCountLabel->limitLabelWidth(135.f, 1.f, .0001f);
-			fuckYouCountLabel->setID("fuck-you-label"_spr);
+			fuckYouCountLabel->setID("fuck-you-count-label"_spr);
 			m_mainLayer->addChild(fuckYouCountLabel);
 			fuckYouCountLabel->setPosition(CCDirector::get()->getWinSize().width / 2.f, 92.f);
+
+			int64_t specificCount = Mod::get()->getSavedValue<int64_t>("fuck-you-level-count", 0);
+			if (type == LikeItemType::LevelList) {
+				specificCount = Mod::get()->getSavedValue<int64_t>("fuck-you-list-count", 0);
+			}
+			CCLabelBMFont* fuckYouSpecificCountLabel = CCLabelBMFont::create(fmt::format("({}: {})", type == LikeItemType::LevelList ? "Lists" : "Levels", specificCount).c_str(), "bigFont.fnt");
+			fuckYouSpecificCountLabel->limitLabelWidth(135.f / 2.f, 1.f, .0001f);
+			fuckYouSpecificCountLabel->setID("fuck-you-specific-count-label"_spr);
+			m_mainLayer->addChild(fuckYouSpecificCountLabel);
+			fuckYouSpecificCountLabel->setPosition(CCDirector::get()->getWinSize().width / 2.f, 78.f);
 		}
 
 		if (nodeIDsMinorVersion > 21 && nodeIDsMajorVersion > 0) {
@@ -98,8 +110,16 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		return true;
 	}
 	void onFuckYou(CCObject* sender) {
+		if (this->m_itemType != LikeItemType::Level && this->m_itemType != LikeItemType::LevelList) return;
 		auto fuckYouCount = Mod::get()->getSavedValue<int64_t>("fuck-you-count", 0);
 		Mod::get()->setSavedValue<int64_t>("fuck-you-count", fuckYouCount + 1);
+		if (this->m_itemType == LikeItemType::Level) {
+			auto fuckYouLevelCount = Mod::get()->getSavedValue<int64_t>("fuck-you-level-count", 0);
+			Mod::get()->setSavedValue<int64_t>("fuck-you-level-count", fuckYouLevelCount + 1);
+		} else if (this->m_itemType == LikeItemType::LevelList) {
+			auto fuckYouListCount = Mod::get()->getSavedValue<int64_t>("fuck-you-list-count", 0);
+			Mod::get()->setSavedValue<int64_t>("fuck-you-list-count", fuckYouListCount + 1);
+		}
 		(void) Mod::get()->saveData();
 		LikeItemLayer::onDislike(nullptr);
 	}
