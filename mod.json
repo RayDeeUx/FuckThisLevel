@@ -8,7 +8,7 @@
 	},
 	"id": "raydeeux_flingus.fuckthislevel",
 	"name": "FuckThisLevel",
-	"version": "v0.0.0-alpha.2",
+	"version": "v0.0.0-alpha.3",
 	"developers": ["RayDeeUx", "flingus"],
 	"description": "Hate levels twice as hard now! [citation needed]",
 	"repository": "https://github.com/RayDeeUx/FuckThisLevel",
@@ -21,6 +21,11 @@
 		},
 		"replaceDislike": {
 			"name": "Replace Dislike Button",
+			"type": "bool",
+			"default": false
+		},
+		"fuckYouCounter": {
+			"name": "\"Fuck You\" Counter",
 			"type": "bool",
 			"default": false
 		}

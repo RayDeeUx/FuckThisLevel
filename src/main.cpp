@@ -16,9 +16,7 @@ class $modify(MyMenuLayer, MenuLayer) {
 
 		auto nodeIDsVersion = Loader::get()->getLoadedMod("geode.node-ids")->getVersion();
 		nodeIDsMajorVersion = static_cast<int>(nodeIDsVersion.getMajor());
-		log::info("nodeIDsMajorVersion: {}", nodeIDsMajorVersion);
 		nodeIDsMinorVersion = static_cast<int>(nodeIDsVersion.getMinor());
-		log::info("nodeIDsMinorVersion: {}", nodeIDsMinorVersion);
 
 		return true;
 	}
@@ -51,10 +49,17 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		auto* fuckYouCircle = CircleButtonSprite::create(fuckYouSprite);
 		fuckYouCircle->setScale(1.2f);
 		auto* middleFingerButton = CCMenuItemSpriteExtra::create(
-			fuckYouCircle, this, menu_selector(LikeItemLayer::onDislike)
+			fuckYouCircle, this, menu_selector(MyLikeItemLayer::onFuckYou)
 		);
 		fuckYouSprite->setScale(.85f);
 		middleFingerButton->setID("fuck-this-level-button"_spr);
+
+		if (Mod::get()->getSettingValue<bool>("fuckYouCounter")) {
+			fuckYouCountLabel->limitLabelWidth(135.f, 1.f, .0001f);
+			fuckYouCountLabel->setID("fuck-you-label"_spr);
+			m_mainLayer->addChild(fuckYouCountLabel);
+			fuckYouCountLabel->setPosition(CCDirector::get()->getWinSize().width / 2.f, 92.f);
+		}
 
 		if (nodeIDsMinorVersion > 21 && nodeIDsMajorVersion > 0) {
 			likeDislikeParent->addChild(middleFingerButton);
@@ -90,5 +95,14 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		likeButtonNode->setPositionX(likeButtonNode->getPositionX() - 17.f);
 		dislikeButtonNode->setPositionX(dislikeButtonNode->getPositionX() + 17.f);
 		return true;
+	}
+	void onFuckYou(CCObject* sender) {
+		auto fuckYouCount = Mod::get()->getSavedValue<int64_t>("fuck-you-count", 0);
+		Mod::get()->setSavedValue<int64_t>("fuck-you-count", fuckYouCount + 1);
+		(void) Mod::get()->saveData();
+		if (Mod::get()->getSettingValue<bool>("fuckYouCounter") && m_mainLayer && m_mainLayer->getChildByID("fuck-you-label"_spr)) {
+			static_cast<CCLabelBMFont*>(m_mainLayer->getChildByID("fuck-you-label"_spr))->setString(fmt::format("\"Fuck You\" Count: {}", Mod::get()->getSavedValue<int64_t>("fuck-you-count", 0)).c_str());
+		}
+		LikeItemLayer::onDislike(nullptr);
 	}
 };
