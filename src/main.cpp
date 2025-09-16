@@ -55,6 +55,7 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		middleFingerButton->setID("fuck-this-level-button"_spr);
 
 		if (Mod::get()->getSettingValue<bool>("fuckYouCounter")) {
+			CCLabelBMFont* fuckYouCountLabel = CCLabelBMFont::create(fmt::format("\"Fuck You\" Count: {}", Mod::get()->getSavedValue<int64_t>("fuck-you-count", 0)).c_str(), "bigFont.fnt");
 			fuckYouCountLabel->limitLabelWidth(135.f, 1.f, .0001f);
 			fuckYouCountLabel->setID("fuck-you-label"_spr);
 			m_mainLayer->addChild(fuckYouCountLabel);
