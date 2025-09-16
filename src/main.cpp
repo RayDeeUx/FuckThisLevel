@@ -101,9 +101,6 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		auto fuckYouCount = Mod::get()->getSavedValue<int64_t>("fuck-you-count", 0);
 		Mod::get()->setSavedValue<int64_t>("fuck-you-count", fuckYouCount + 1);
 		(void) Mod::get()->saveData();
-		if (Mod::get()->getSettingValue<bool>("fuckYouCounter") && m_mainLayer && m_mainLayer->getChildByID("fuck-you-label"_spr)) {
-			static_cast<CCLabelBMFont*>(m_mainLayer->getChildByID("fuck-you-label"_spr))->setString(fmt::format("\"Fuck You\" Count: {}", Mod::get()->getSavedValue<int64_t>("fuck-you-count", 0)).c_str());
-		}
 		LikeItemLayer::onDislike(nullptr);
 	}
 };
