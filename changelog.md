@@ -1,4 +1,6 @@
 # FuckThisLevel Changelog
+## v0.0.0-alpha.5
+- Refactor some code in light of recent updates from other mods.
 ## v0.0.0-alpha.4
 - Fix some lingering bugs.
 - Added specificity for the number of levels/level lists you've given the "Fuck You" to.

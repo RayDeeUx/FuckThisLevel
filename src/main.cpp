@@ -35,7 +35,7 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		auto* likeButtonNode = m_mainLayer->querySelector("action-menu > like-button");
 		auto* dislikeButtonNode = m_mainLayer->querySelector("action-menu > dislike-button");
 		auto* likeDislikeParent = m_mainLayer->getChildByID("action-menu");
-		if (!likeButtonNode || !dislikeButtonNode) {
+		if (!likeButtonNode || !dislikeButtonNode || !likeDislikeParent) {
 			if (nodeIDsMinorVersion < 22 && nodeIDsMajorVersion < 2) {
 				likeButtonNode = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(1);
 				dislikeButtonNode = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(2);
@@ -121,6 +121,6 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 			Mod::get()->setSavedValue<int64_t>("fuck-you-list-count", fuckYouListCount + 1);
 		}
 		(void) Mod::get()->saveData();
-		LikeItemLayer::onDislike(nullptr);
+		LikeItemLayer::triggerLike(false);
 	}
 };
