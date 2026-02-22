@@ -35,13 +35,6 @@ class $modify(MyLikeItemLayer, LikeItemLayer) {
 		auto* likeButtonNode = m_mainLayer->querySelector("action-menu > like-button");
 		auto* dislikeButtonNode = m_mainLayer->querySelector("action-menu > dislike-button");
 		auto* likeDislikeParent = m_mainLayer->getChildByID("action-menu");
-		if (!likeButtonNode || !dislikeButtonNode || !likeDislikeParent) {
-			if (nodeIDsMinorVersion < 22 && nodeIDsMajorVersion < 2) {
-				likeButtonNode = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(1);
-				dislikeButtonNode = m_buttonMenu->getChildByType<CCMenuItemSpriteExtra>(2);
-				likeDislikeParent = m_buttonMenu;
-			} else return true;
-		}
 
 		auto* likeButton = static_cast<CCMenuItemSpriteExtra*>(likeButtonNode);
 		auto* dislikeButton = static_cast<CCMenuItemSpriteExtra*>(dislikeButtonNode);
